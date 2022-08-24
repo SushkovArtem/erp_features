@@ -6,12 +6,8 @@ import io.libs.Utils
 def sqlUtils = new SqlUtils()
 def utils = new Utils()
 def projectHelpers = new ProjectHelpers()
-def backupTasks = [:]
-def restoreTasks = [:]
-def dropDbTasks = [:]
-def createDbTasks = [:]
+
 def runHandlers1cTasks = [:]
-def updateDbTasks = [:]
 
 pipeline {
 
@@ -62,82 +58,6 @@ pipeline {
                         dir ('build') {
                             writeFile file:'dummy', text:''
                         }
-                    }
-                }
-            }
-        }
-        stage("Запуск") {
-            steps {
-                timestamps {
-                    script {
-
-                        for (i = 0;  i < templatebasesList.size(); i++) {
-                            templateDb = templatebasesList[i]
-                            storage1cPath = storages1cPathList[i]
-                            testbase = "test_${templateDb}"
-                            testbaseConnString = projectHelpers.getConnString(server1c, testbase, agent1cPort)
-                            backupPath = "${env.WORKSPACE}/build/temp_${templateDb}_${utils.currentDateStamp()}"
-
-                            // 1. Удаляем тестовую базу из кластера (если он там была) и очищаем клиентский кеш 1с
-                            dropDbTasks["dropDbTask_${testbase}"] = dropDbTask(
-                                server1c, 
-                                server1cPort, 
-                                serverSql, 
-                                testbase, 
-                                admin1cUser, 
-                                admin1cPwd,
-                                sqluser,
-                                sqlPwd
-                            )
-                            // 2. Делаем sql бекап эталонной базы, которую будем загружать в тестовую базу
-                            backupTasks["backupTask_${templateDb}"] = backupTask(
-                                serverSql, 
-                                templateDb, 
-                                backupPath,
-                                sqlUser,
-                                sqlPwd
-                            )
-                            // 3. Загружаем sql бекап эталонной базы в тестовую
-                            restoreTasks["restoreTask_${testbase}"] = restoreTask(
-                                serverSql, 
-                                testbase, 
-                                backupPath,
-                                sqlUser,
-                                sqlPwd
-                            )
-                            // 4. Создаем тестовую базу кластере 1С
-                            createDbTasks["createDbTask_${testbase}"] = createDbTask(
-                                "${server1c}:${agent1cPort}",
-                                serverSql,
-                                platform1c,
-                                testbase
-                            )
-                            // 5. Обновляем тестовую базу из хранилища 1С (если применимо)
-                            updateDbTasks["updateTask_${testbase}"] = updateDbTask(
-                                platform1c,
-                                testbase, 
-                                storage1cPath, 
-                                storageUser, 
-                                storagePwd, 
-                                testbaseConnString, 
-                                admin1cUser, 
-                                admin1cPwd
-                            )
-                            // 6. Запускаем внешнюю обработку 1С, которая очищает базу от всплывающего окна с тем, что база перемещена при старте 1С
-                            runHandlers1cTasks["runHandlers1cTask_${testbase}"] = runHandlers1cTask(
-                                testbase, 
-                                admin1cUser, 
-                                admin1cPwd,
-                                testbaseConnString
-                            )
-                        }
-
-                        parallel dropDbTasks
-                        parallel backupTasks
-                        parallel restoreTasks
-                        parallel createDbTasks
-                        parallel updateDbTasks
-                        parallel runHandlers1cTasks
                     }
                 }
             }
@@ -193,61 +113,6 @@ pipeline {
     }
 }
 
-
-def dropDbTask(server1c, server1cPort, serverSql, infobase, admin1cUser, admin1cPwd, sqluser, sqlPwd) {
-    return {
-        timestamps {
-            stage("Удаление ${infobase}") {
-                def projectHelpers = new ProjectHelpers()
-                def utils = new Utils()
-
-                projectHelpers.dropDb(server1c, server1cPort, serverSql, infobase, admin1cUser, admin1cPwd, sqluser, sqlPwd)
-            }
-        }
-    }
-}
-
-def createDbTask(server1c, serverSql, platform1c, infobase) {
-    return {
-        stage("Создание базы ${infobase}") {
-            timestamps {
-                def projectHelpers = new ProjectHelpers()
-                try {
-                    projectHelpers.createDb(platform1c, server1c, serversql, infobase, null, false)
-                } catch (excp) {
-                    echo "Error happened when creating base ${infobase}. Probably base already exists in the ibases.v8i list. Skip the error"
-                }
-            }
-        }
-    }
-}
-
-def backupTask(serverSql, infobase, backupPath, sqlUser, sqlPwd) {
-    return {
-        stage("sql бекап ${infobase}") {
-            timestamps {
-                def sqlUtils = new SqlUtils()
-
-                sqlUtils.checkDb(serverSql, infobase, sqlUser, sqlPwd)
-                sqlUtils.backupDb(serverSql, infobase, backupPath, sqlUser, sqlPwd)
-            }
-        }
-    }
-}
-
-def restoreTask(serverSql, infobase, backupPath, sqlUser, sqlPwd) {
-    return {
-        stage("Востановление ${infobase} бекапа") {
-            timestamps {
-                sqlUtils = new SqlUtils()
-
-                sqlUtils.createEmptyDb(serverSql, infobase, sqlUser, sqlPwd)
-                sqlUtils.restoreDb(serverSql, infobase, backupPath, sqlUser, sqlPwd)
-            }
-        }
-    }
-}
-
 def runHandlers1cTask(infobase, admin1cUser, admin1cPwd, testbaseConnString) {
     return {
         stage("Запуск 1с обработки на ${infobase}") {
@@ -259,19 +124,3 @@ def runHandlers1cTask(infobase, admin1cUser, admin1cPwd, testbaseConnString) {
     }
 }
 
-def updateDbTask(platform1c, infobase, storage1cPath, storageUser, storagePwd, connString, admin1cUser, admin1cPwd) {
-    return {
-        stage("Загрузка из хранилища ${infobase}") {
-            timestamps {
-                prHelpers = new ProjectHelpers()
-
-                if (storage1cPath == null || storage1cPath.isEmpty()) {
-                    return
-                }
-
-                prHelpers.loadCfgFrom1CStorage(storage1cPath, storageUser, storagePwd, connString, admin1cUser, admin1cPwd, platform1c)
-                prHelpers.updateInfobase(connString, admin1cUser, admin1cPwd, platform1c)
-            }
-        }
-    }
-}
