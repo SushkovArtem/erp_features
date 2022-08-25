@@ -3,7 +3,7 @@
     "default": {
         "--db-user": "",
         "--db-pwd": "",
-        "--ordinaryapp": "0",
+        "--ordinaryapp": "1",
         "--v8version": ""
     },
     "vanessa": {
