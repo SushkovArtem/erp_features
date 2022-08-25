@@ -7,8 +7,6 @@ def sqlUtils = new SqlUtils()
 def utils = new Utils()
 def projectHelpers = new ProjectHelpers()
 
-def runHandlers1cTasks = [:]
-
 pipeline {
 
     parameters {
