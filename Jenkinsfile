@@ -48,7 +48,7 @@ pipeline {
 
                         admin1cUsrLine = ""
                         if (admin1cUser != null && !admin1cUser.isEmpty()) {
-                            admin1cUsrLine = "--db-user ${admin1cUser}"
+                            admin1cUsrLine = "--db-user \"${admin1cUser}\""
                         }
 
                         admin1cPwdLine = ""
