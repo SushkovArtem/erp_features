@@ -36,40 +36,10 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr:'10'))
     }
     stages {
-        stage("Подготовка") {
-            steps {
-                timestamps {
-                    script {
-                        templatebasesList = utils.lineToArray(templatebases.toLowerCase())
-                        storages1cPathList = utils.lineToArray(storages1cPath.toLowerCase())
-
-                        if (storages1cPathList.size() != 0) {
-                            assert storages1cPathList.size() == templatebasesList.size()
-                        }
-
-                        server1c = server1c.isEmpty() ? "localhost" : server1c
-                        serverSql = serverSql.isEmpty() ? "localhost" : serverSql
-                        server1cPort = server1cPort.isEmpty() ? "1540" : server1cPort
-                        agent1cPort = agent1cPort.isEmpty() ? "1541" : agent1cPort
-                        env.sqlUser = sqlUser.isEmpty() ? "sa" : sqlUser
-                        testbase = null
-
-                        // создаем пустые каталоги
-                        dir ('build') {
-                            writeFile file:'dummy', text:''
-                        }
-                    }
-                }
-            }
-        }
         stage("Тестирование ADD") {
             steps {
                 timestamps {
                     script {
-
-                        if (templatebasesList.size() == 0) {
-                            return
-                        }
 
                         platform1cLine = ""
                         if (platform1c != null && !platform1c.isEmpty()) {
@@ -85,11 +55,14 @@ pipeline {
                         if (admin1cPwd != null && !admin1cPwd.isEmpty()) {
                             admin1cPwdLine = "--db-pwd ${admin1cPwd}"
                         }
+
+                        testbaseConnString = projectHelpers.getConnString(server1c, templatebases, agent1cPort)
+
                         // Запускаем ADD тестирование на произвольной базе, сохранившейся в переменной testbaseConnString
                         returnCode = utils.cmd("runner vanessa --settings tools/vrunner.json ${platform1cLine} --ibconnection \"${testbaseConnString}\" ${admin1cUsrLine} ${admin1cPwdLine} --pathvanessa tools/add/bddRunner.epf")
 
                         if (returnCode != 0) {
-                            utils.raiseError("Возникла ошибка при запуске ADD на сервере ${server1c} и базе ${testbase}")
+                            utils.raiseError("Возникла ошибка при запуске ADD на сервере ${server1c} и базе ${templatebases}")
                         }
                     }
                 }
