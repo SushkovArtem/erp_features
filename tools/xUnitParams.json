@@ -1,12 +1,16 @@
 {
-    "$schema":"https://github.com/vanessa-opensource/vanessa-runner/develop/xunit-schema.json",
-    "ДелатьЛогВыполненияСценариевВТекстовыйФайл": true,
+    "$schema":"https://raw.githubusercontent.com/vanessa-opensource/vanessa-runner/develop/xunit-schema.json",
+    "Отладка":false,
+    "ДобавлятьИмяПользователяВПредставлениеТеста":true,
+    "ДелатьЛогВыполненияСценариевВТекстовыйФайл":true,
     "ИмяФайлаЛогВыполненияСценариев": "$workspaceRoot/build/ServiceBases/log-xunit.txt",
-    "ОбластьДанныхМенеджера": 4512,
 
-    "Отладка": false,
-    "ДобавлятьИмяПользователяВПредставлениеТеста": true,
+    "smoke": {
+        "СтрогийПорядокВыполнения":true,
+        "ВыводитьСообщенияВЖурналРегистрации":true,
+        "ИсключитьФормыЗависящиеОтОтключенныхФункциональныхОпций": true,
 
-    "smoke" : {
+        "СпособГруппировки":"ПоВидуМетаданных",
+        "КоличествоВГруппе":1
     }
 }
