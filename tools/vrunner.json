@@ -7,11 +7,13 @@
         "--v8version": ""
     },
     "xunit": {
-        "--xddConfig": "C:/Users/Дымбрылов/AppData/Local/Jenkins/.jenkins/workspace/lusita_features/tools/xUnitParams.json",
-        "--pathxunit": "C:/Users/Дымбрылов/AppData/Local/Jenkins/.jenkins/workspace/lusita_features/tools/add",
+        "--xddConfig": "tools/xUnitParams.json",
+        "--pathxunit": ".",
         "testsPath": "tests/smoke",
         "--xdddebug": true,
-        "--workspace": "C:/Users/Дымбрылов/AppData/Local/Jenkins/.jenkins/workspace/lusita_features",
-        "--additional": "/DisplayAllFunctions /L ru" 
+        "--workspace": ".",
+        "--additional": "/DisplayAllFunctions /L ru",
+        "--reportsxunit": "ГенераторОтчетаJUnitXML{tools/build/junit.xml};ГенераторОтчетаAllureXMLВерсия2{tools/build/allure/allure.xml}",
+        "--xddExitCodePath": "tools//build/xddExitCodePath.txt" 
     } 
 }
