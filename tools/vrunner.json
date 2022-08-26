@@ -6,10 +6,11 @@
         "--ordinaryapp": "1",
         "--v8version": ""
     },
-    "vanessa": {
-        "--vanessasettings": "tools/VBParams.json",
+    "xunit": {
+        "--pathxunit": ".",
+        "testsPath": ".",
+        "--xdddebug": true,
         "--workspace": ".",
-        "--pathvanessa": ".",
-        "--additional": "/DisplayAllFunctions /L ru"
-    }
+        "--additional": "/DisplayAllFunctions /L ru" 
+    } 
 }
