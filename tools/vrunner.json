@@ -7,8 +7,8 @@
         "--v8version": ""
     },
     "xunit": {
-        "--xddConfig": "../xUnitParams.json",
-        "--pathxunit": "./add",
+        "--xddConfig": "C:/Users/Дымбрылов/AppData/Local/Jenkins/.jenkins/workspace/lusita_features/tools/xUnitParams.json",
+        "--pathxunit": "C:/Users/Дымбрылов/AppData/Local/Jenkins/.jenkins/workspace/lusita_features/tools/add",
         "testsPath": "tests/smoke",
         "--xdddebug": true,
         "--workspace": ".",
