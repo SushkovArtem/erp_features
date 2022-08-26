@@ -11,7 +11,7 @@
         "--pathxunit": "C:/Users/Дымбрылов/AppData/Local/Jenkins/.jenkins/workspace/lusita_features/tools/add",
         "testsPath": "tests/smoke",
         "--xdddebug": true,
-        "--workspace": ".",
+        "--workspace": "C:/Users/Дымбрылов/AppData/Local/Jenkins/.jenkins/workspace/lusita_features",
         "--additional": "/DisplayAllFunctions /L ru" 
     } 
 }
