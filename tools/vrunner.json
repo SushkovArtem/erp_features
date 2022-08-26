@@ -9,7 +9,7 @@
     "xunit": {
         "--xddConfig": "tools/xUnitParams.json",
         "--pathxunit": ".",
-        "testsPath": "add/tests/smoke",
+        "testsPath": "tools/add/tests/smoke",
         "--xdddebug": true,
         "--workspace": ".",
         "--additional": "/DisplayAllFunctions /L ru",
