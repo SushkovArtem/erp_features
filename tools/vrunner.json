@@ -8,12 +8,12 @@
     },
     "xunit": {
         "--xddConfig": "tools/xUnitParams.json",
-        "--pathxunit": ".",
+        "--pathxunit": "tools/add/xddTestRunner.epf",
         "testsPath": "tools/add/tests/smoke",
         "--xdddebug": true,
         "--workspace": ".",
         "--additional": "/DisplayAllFunctions /L ru",
         "--reportsxunit": "ГенераторОтчетаJUnitXML{tools/build/junit.xml};ГенераторОтчетаAllureXMLВерсия2{tools/build/allure/allure.xml}",
-        "--xddExitCodePath": "tools//build/xddExitCodePath.txt" 
+        "--xddExitCodePath": "tools/build/xddExitCodePath.txt" 
     } 
 }
