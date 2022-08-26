@@ -7,8 +7,8 @@
         "--v8version": ""
     },
     "xunit": {
-        "--xddConfig": "tools/xUnitParams.json",
-        "--pathxunit": ".",
+        "--xddConfig": "./xUnitParams.json",
+        "--pathxunit": "./add",
         "testsPath": "tests/smoke",
         "--xdddebug": true,
         "--workspace": ".",
