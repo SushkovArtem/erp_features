@@ -21,7 +21,7 @@ pipeline {
     }
 
     agent {
-        label "master"
+        label "prog2"
     }
     options {
         timeout(time: 8, unit: 'HOURS') 
