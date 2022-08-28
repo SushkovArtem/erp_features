@@ -21,7 +21,7 @@ pipeline {
     }
 
     agent {
-        label "prog2"
+        label jenkinsAgent
     }
     options {
         timeout(time: 8, unit: 'HOURS') 
