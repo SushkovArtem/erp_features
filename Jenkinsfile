@@ -21,7 +21,7 @@ pipeline {
     }
 
     agent {
-        label jenkinsAgent
+        label "${jenkinsAgent}"
     }
     options {
         timeout(time: 8, unit: 'HOURS') 
